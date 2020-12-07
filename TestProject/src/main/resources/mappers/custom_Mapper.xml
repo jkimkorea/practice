@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.mapper.Custom_Mapper">
+
+	<insert id="registering">
+	 	insert into custom(busi_num,custom,short_,ceo,charge_person,busi_condition,item,post_num,
+		 	addr1,addr2,tel,fax,homepage,co_yn,foreign_yn,tax_yn,country_eng,country_kor,special_relation,
+		 	trade_stop,contract_period_s,contract_period_e,regi_info_man,regi_info_date)
+		values (#{busi_num},#{custom},#{short_},#{ceo},#{charge_person},#{busi_condition},#{item},#{post_num},
+			#{addr1},#{addr2},#{tel},#{fax},#{homepage},#{co_yn},#{foreign_yn},#{tax_yn},#{country_eng},#{country_kor},
+			#{special_relation},#{trade_stop},#{contract_period_s},#{contract_period_e},#{regi_info_man},sysdate)
+	</insert>
+	
+	<insert id="account">
+		insert into account(busi_num,factory,trade_bank,account_num)
+		values(#{busi_num},#{factory},#{trade_bank},#{account_num})
+	</insert>
+	
+	<update id="updateAccount">
+		update account
+		set factory=#{factory},
+			trade_bank=#{trade_bank},
+			account_num=#{account_num}
+		where busi_num=#{busi_num}
+	</update>
+	
+	<update id="change">
+	 	update custom set 
+	 	busi_num=#{busi_num},
+	 	custom=#{custom},
+	 	short_=#{short_},
+	 	ceo=#{ceo},
+	 	charge_person=#{charge_person},
+	 	busi_condition=#{busi_condition},
+	 	item=#{item},
+	 	post_num=#{post_num},
+		addr1=#{addr1},
+		addr2=#{addr2},
+		tel=#{tel},
+		fax=#{fax},
+		homepage=#{homepage},
+		co_yn=#{co_yn},
+		foreign_yn=#{foreign_yn},
+		tax_yn=#{tax_yn},
+		country_eng=#{country_eng},
+		country_kor=#{country_kor},
+		special_relation=#{special_relation},
+		trade_stop=#{trade_stop},
+		contract_period_s=#{contract_period_s},
+		contract_period_e=#{contract_period_e},
+		modi_info_man=#{regi_info_man},
+		modi_info_date=sysdate
+		where busi_num=#{busi_num}
+	</update>
+	
+	<delete id="delete">
+		delete from custom where busi_num=#{busi_num}
+	</delete>
+	
+	<select id="searchByBusi_num" resultType="CustomDTO">
+		select c.busi_num,c.custom,c.short_,c.ceo,c.charge_person,c.busi_condition,c.item,c.post_num, 
+		c.addr1,c.addr2,c.tel,c.fax,c.homepage,co_yn,c.foreign_yn,c.tax_yn,c.country_eng,c.country_kor,c.special_relation, 
+		c.trade_stop,c.contract_period_s,c.contract_period_e,c.regi_info_man,c.regi_info_date,c.modi_info_man,c.modi_info_date, 
+		a.factory,a.trade_bank,a.account_num 
+		from custom c inner join account a on c.busi_num=a.busi_num 
+		where c.busi_num=#{busi_num}
+	</select>
+	
+	<select id="search" resultType="CustomListVO">
+		select busi_num,custom
+		from custom
+		<include refid="search"/>
+	</select>
+	
+	<sql id="search">
+	  <choose>
+		<when test="busi_num.toString() != null and custom.toString() != null">
+				where busi_num like '%' || #{busi_num} || '%'
+				and custom like '%' || #{custom} || '%'
+		</when>
+		<when test="busi_num.toString() == null and custom.toString() != null">
+				where custom like '%' || #{custom} || '%'
+		</when>
+		<when test="busi_num.toString() != null and custom.toString() == null">
+				where busi_num like '%' || #{busi_num} || '%'
+		</when>
+		<otherwise>
+		</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="readList" resultType="CustomListVO">
+		select busi_num,custom from custom 
+	</select>
+	
+</mapper>
